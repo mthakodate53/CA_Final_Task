@@ -1,0 +1,19 @@
+{
+  "name": "react-final-task",
+  "version": "1.0.0",
+  "description": "Final task for CA Front End Course",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mthakodate53/CA_Final_Task.git"
+  },
+  "author": "Vismantas Stankevicius",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mthakodate53/CA_Final_Task/issues"
+  },
+  "homepage": "https://github.com/mthakodate53/CA_Final_Task#readme"
+}
