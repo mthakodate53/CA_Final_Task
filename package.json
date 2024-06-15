@@ -4,7 +4,8 @@
   "description": "Final task for CA Front End Course",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "dev": "node server.js"
   },
   "repository": {
     "type": "git",
