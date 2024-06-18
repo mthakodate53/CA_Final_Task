@@ -1,42 +1,45 @@
 const express = require("express");
 const cors = require("cors");
-const mongodb = require("mongodb");
-const MongoClient = mongodb.MongoClient;
+const { MongoClient, ObjectId } = require("mongodb");
+
 const URI =
-  "mongodb+srv://vismantasstankevicius:ananasas33@cluster0.bgzct23.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-const database = new MongoClient(URI);
+  "mongodb+srv://vismantasstankevicius:ananasas33@cluster0.bgzct23.mongodb.net/FinalTask?retryWrites=true&w=majority&appName=Cluster0";
 const app = express();
+const PORT = 5010;
+
 app.use(cors());
 app.use(express.json());
-const Port = 5010;
 
-(async () => {
+async function main() {
+  const client = new MongoClient(URI);
+
   try {
-    await database.connect();
+    await client.connect();
     console.log("MongoDB connected");
-    const users = database.db("FinalTask").collection("users");
-    const products = database.db("FinalTask").collection("products");
-    const orders = database.db("FinalTask").collection("orders");
-    const categories = database.db("FinalTask").collection("categories");
 
+    const db = client.db("FinalTask");
+    const usersCollection = db.collection("users");
+    const productsCollection = db.collection("products");
+    const ordersCollection = db.collection("orders");
+    const categoriesCollection = db.collection("categories");
+
+    // Users
     app.post("/users", async (req, res) => {
       try {
         const user = req.body;
-        await users.insertOne(user);
-        res.send("User added");
+        const result = await usersCollection.insertOne(user);
+        res.send(result.ops[0]);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error adding user");
+        handleError(res, e);
       }
     });
 
     app.get("/users", async (req, res) => {
       try {
-        const allUsers = await users.find().toArray();
-        res.send(allUsers);
+        const users = await usersCollection.find().toArray();
+        res.send(users);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching users");
+        handleError(res, e);
       }
     });
 
@@ -44,46 +47,63 @@ const Port = 5010;
       try {
         const userId = req.params.id;
         const updatedUser = req.body;
-        await users.updateOne(
-          { _id: new mongodb.ObjectId(userId) },
+        const result = await usersCollection.updateOne(
+          { _id: ObjectId(userId) },
           { $set: updatedUser }
         );
         res.send("User updated");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error updating user");
+        handleError(res, e);
       }
     });
 
     app.delete("/users/:id", async (req, res) => {
       try {
         const userId = req.params.id;
-        await users.deleteOne({ _id: new mongodb.ObjectId(userId) });
+        const result = await usersCollection.deleteOne({
+          _id: ObjectId(userId),
+        });
         res.send("User deleted");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error deleting user");
+        handleError(res, e);
+      }
+    });
+
+    // Products
+
+    app.get("/products/:id", async (req, res) => {
+      const productId = req.params.id;
+      try {
+        const product = await productsCollection.findOne({
+          _id: new ObjectId(productId),
+        });
+        if (product) {
+          res.json(product);
+        } else {
+          res.status(404).json({ error: "Product not found" });
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal server error" });
       }
     });
 
     app.post("/products", async (req, res) => {
       try {
         const product = req.body;
-        await products.insertOne(product);
-        res.send("Product added");
+        const result = await productsCollection.insertOne(product);
+        res.send(result.ops[0]);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error adding product");
+        handleError(res, e);
       }
     });
 
     app.get("/products", async (req, res) => {
       try {
-        const allProducts = await products.find().toArray();
-        res.send(allProducts);
+        const products = await productsCollection.find().toArray();
+        res.send(products);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching products");
+        handleError(res, e);
       }
     });
 
@@ -91,46 +111,45 @@ const Port = 5010;
       try {
         const productId = req.params.id;
         const updatedProduct = req.body;
-        await products.updateOne(
-          { _id: new mongodb.ObjectId(productId) },
+        const result = await productsCollection.updateOne(
+          { _id: ObjectId(productId) },
           { $set: updatedProduct }
         );
         res.send("Product updated");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error updating product");
+        handleError(res, e);
       }
     });
 
     app.delete("/products/:id", async (req, res) => {
       try {
         const productId = req.params.id;
-        await products.deleteOne({ _id: new mongodb.ObjectId(productId) });
+        const result = await productsCollection.deleteOne({
+          _id: ObjectId(productId),
+        });
         res.send("Product deleted");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error deleting product");
+        handleError(res, e);
       }
     });
 
+    // Orders
     app.post("/orders", async (req, res) => {
       try {
         const order = req.body;
-        await orders.insertOne(order);
-        res.send("Order added");
+        const result = await ordersCollection.insertOne(order);
+        res.send(result.ops[0]);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error adding order");
+        handleError(res, e);
       }
     });
 
     app.get("/orders", async (req, res) => {
       try {
-        const allOrders = await orders.find().toArray();
-        res.send(allOrders);
+        const orders = await ordersCollection.find().toArray();
+        res.send(orders);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching orders");
+        handleError(res, e);
       }
     });
 
@@ -138,46 +157,45 @@ const Port = 5010;
       try {
         const orderId = req.params.id;
         const updatedOrder = req.body;
-        await orders.updateOne(
-          { _id: new mongodb.ObjectId(orderId) },
+        const result = await ordersCollection.updateOne(
+          { _id: ObjectId(orderId) },
           { $set: updatedOrder }
         );
         res.send("Order updated");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error updating order");
+        handleError(res, e);
       }
     });
 
     app.delete("/orders/:id", async (req, res) => {
       try {
         const orderId = req.params.id;
-        await orders.deleteOne({ _id: new mongodb.ObjectId(orderId) });
+        const result = await ordersCollection.deleteOne({
+          _id: ObjectId(orderId),
+        });
         res.send("Order deleted");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error deleting order");
+        handleError(res, e);
       }
     });
 
+    // Categories
     app.post("/categories", async (req, res) => {
       try {
         const category = req.body;
-        await categories.insertOne(category);
-        res.send("Category added");
+        const result = await categoriesCollection.insertOne(category);
+        res.send(result.ops[0]);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error adding category");
+        handleError(res, e);
       }
     });
 
     app.get("/categories", async (req, res) => {
       try {
-        const allCategories = await categories.find().toArray();
-        res.send(allCategories);
+        const categories = await categoriesCollection.find().toArray();
+        res.send(categories);
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching categories");
+        handleError(res, e);
       }
     });
 
@@ -185,77 +203,40 @@ const Port = 5010;
       try {
         const categoryId = req.params.id;
         const updatedCategory = req.body;
-        await categories.updateOne(
-          { _id: new mongodb.ObjectId(categoryId) },
+        const result = await categoriesCollection.updateOne(
+          { _id: ObjectId(categoryId) },
           { $set: updatedCategory }
         );
         res.send("Category updated");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error updating category");
+        handleError(res, e);
       }
     });
 
     app.delete("/categories/:id", async (req, res) => {
       try {
         const categoryId = req.params.id;
-        await categories.deleteOne({ _id: new mongodb.ObjectId(categoryId) });
+        const result = await categoriesCollection.deleteOne({
+          _id: ObjectId(categoryId),
+        });
         res.send("Category deleted");
       } catch (e) {
-        console.error(e);
-        res.status(500).send("Error deleting category");
+        handleError(res, e);
       }
     });
 
-    app.get("/users/:userId/orders", async (req, res) => {
-      try {
-        const userId = req.params.userId;
-        const userOrders = await orders
-          .find({ user: new mongodb.ObjectId(userId) })
-          .toArray();
-        res.send(userOrders);
-      } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching user orders");
-      }
-    });
+    // Error handler
+    function handleError(res, error) {
+      console.error("Error:", error);
+      res.status(500).send("Server error");
+    }
 
-    app.get("/categories/:categoryId/products", async (req, res) => {
-      try {
-        const categoryId = req.params.categoryId;
-        const categoryProducts = await products
-          .find({ category: categoryId })
-          .toArray();
-        res.send(categoryProducts);
-      } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching category products");
-      }
-    });
-
-    app.get("/products", async (req, res) => {
-      try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const category = req.query.category;
-        const query = category ? { category } : {};
-        const skip = (page - 1) * limit;
-        const products = await products
-          .find(query)
-          .skip(skip)
-          .limit(limit)
-          .toArray();
-        res.send(products);
-      } catch (e) {
-        console.error(e);
-        res.status(500).send("Error fetching products");
-      }
-    });
-
-    app.listen(Port, () => {
-      console.log(`Server running on port ${Port}`);
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   } catch (e) {
-    console.error(e);
+    console.error("MongoDB connection error:", e);
   }
-})();
+}
+
+main();
