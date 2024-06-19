@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 
 const ProductPage = () => {
   const { productId } = useParams();
-  console.log("PRODUCT ID:" + productId);
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

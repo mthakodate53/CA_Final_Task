@@ -1,13 +1,12 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
-import Home from "./Home";
-import AllProducts from "./AllProducts";
-import ProductPage from "./ProductPage";
-import CartPage from "./CartPage";
-import Checkout from "./Checkout";
-import App from "./App";
+import Home from "./pages/Home";
+import AllProducts from "./pages/AllProducts";
+import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
+import Checkout from "./pages/Checkout";
+import App from "./pages/App";
 
-import "./index.css";
+import "./pages/index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -40,7 +39,5 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );
