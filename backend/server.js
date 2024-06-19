@@ -100,7 +100,15 @@ async function main() {
 
     app.get("/products", async (req, res) => {
       try {
-        const products = await productsCollection.find().toArray();
+        const { page = 1, limit = 10, category } = req.query;
+        const query = category ? { category } : {};
+        const options = {
+          skip: (page - 1) * parseInt(limit),
+          limit: parseInt(limit),
+        };
+        const products = await productsCollection
+          .find(query, options)
+          .toArray();
         res.send(products);
       } catch (e) {
         handleError(res, e);
