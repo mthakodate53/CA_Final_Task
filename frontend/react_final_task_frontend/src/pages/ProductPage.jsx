@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Footer from "../assets/components/Footer";
+import Modal from "../assets/components/Modal";
 
 const TEST_USER_ID = "test_user_123";
 
 const ProductPage = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({});
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -57,10 +61,30 @@ const ProductPage = () => {
       }
       const data = await response.json();
       console.log("Item added to cart:", data);
-      alert("Item added to cart successfully!");
+      setModalContent({
+        title: "Success",
+        message: "Item added to cart successfully!",
+        primaryButton: {
+          text: "Continue Shopping",
+          onClick: () => {},
+        },
+        secondaryButton: {
+          text: "Go to Checkout",
+          onClick: () => navigate("/checkout"),
+        },
+      });
+      setIsModalOpen(true);
     } catch (e) {
       console.error("Error adding item to cart:", e);
-      alert("Failed to add item to cart. Please try again.");
+      setModalContent({
+        title: "Error",
+        message: "Failed to add item to cart. Please try again.",
+        primaryButton: {
+          text: "Close",
+          onClick: () => {},
+        },
+      });
+      setIsModalOpen(true);
     }
   };
 
@@ -99,6 +123,11 @@ const ProductPage = () => {
         {product.imageUrl && <img src={product.imageUrl} alt={product.name} />}
         <Link to="/products">Back to All Products</Link>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        {...modalContent}
+      />
       <Footer />
     </div>
   );
