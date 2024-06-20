@@ -16,12 +16,115 @@ async function main() {
   try {
     await client.connect();
     console.log("MongoDB connected");
-
     const db = client.db("FinalTask");
+    const cartsCollection = db.collection("carts");
     const usersCollection = db.collection("users");
     const productsCollection = db.collection("products");
     const ordersCollection = db.collection("orders");
     const categoriesCollection = db.collection("categories");
+
+    // Carts
+
+    // Carts
+    app.post("/cart/add", async (req, res) => {
+      try {
+        const { productId, name, price, quantity, userId } = req.body;
+        const cartCollection = db.collection("carts");
+        let cart = await cartCollection.findOne({ userId });
+        if (!cart) {
+          cart = {
+            userId,
+            items: [],
+          };
+        }
+
+        const existingItemIndex = cart.items.findIndex(
+          (item) => item.productId === productId
+        );
+        if (existingItemIndex !== -1) {
+          cart.items[existingItemIndex].quantity += quantity;
+        } else {
+          cart.items.push({ productId, name, price, quantity });
+        }
+        await cartCollection.updateOne(
+          { userId },
+          { $set: cart },
+          { upsert: true }
+        );
+        res.json({ message: "Item added to cart", cart });
+      } catch (e) {
+        console.error("Error adding item to cart", e);
+        res.status(500).json({ error: "Failed to add item to cart" });
+      }
+    });
+    app.get("/cart/:userId", async (req, res) => {
+      const { userId } = req.params;
+      try {
+        const cart = await cartsCollection.findOne({ userId });
+        if (!cart) {
+          return res.status(404).send({ message: "Cart not found" });
+        }
+        res.send(cart);
+      } catch (e) {
+        console.error("Failed to fetch cart", e);
+        res.status(500).send({ error: "Failed to fetch cart" });
+      }
+    });
+
+    app.patch("/cart/:userId", async (req, res) => {
+      const { userId } = req.params;
+      const { productId, quantity } = req.body;
+
+      try {
+        // Find the cart for the given userId
+        const cart = await cartsCollection.findOne({ userId });
+
+        if (!cart) {
+          return res.status(404).send({ message: "Cart not found" });
+        }
+
+        // Find the item in the cart
+        const itemIndex = cart.items.findIndex(
+          (item) => item.productId === productId
+        );
+        if (itemIndex === -1) {
+          return res.status(404).send({ error: "Item not found" });
+        }
+        cart.items[itemIndex].quantity = quantity;
+        await cartsCollection.updateOne(
+          { userId },
+          { $set: { items: cart.items } }
+        );
+        res.send(cart);
+      } catch (e) {
+        console.error("Failed to update cart item quantity", e);
+        res
+          .status(500)
+          .send({ message: "Failed to update cart item quantity" });
+      }
+    });
+
+    app.delete("/cart/:userId", async (req, res) => {
+      const { userId } = req.params;
+      const { productId } = req.body;
+      try {
+        const cart = await cartsCollection.findOne({ userId });
+        if (!cart) {
+          return res.status(404).send({ message: "Cart not found" });
+        }
+        const updatedItems = cart.items.filter(
+          (item) => item.productId !== productId
+        );
+        await cartsCollection.updateOne(
+          { userId },
+          { $set: { items: updatedItems } }
+        );
+        res.send({ items: updatedItems });
+      } catch (e) {
+        console.error("Failed to remove item from cart:", e);
+        res.status(500).send({ message: "Failed to remove item from cart" });
+      }
+    });
 
     // Users
     app.post("/users", async (req, res) => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const CategoryLinks = () => {
   const [categories, setCategories] = useState([]);
@@ -20,7 +21,6 @@ const CategoryLinks = () => {
         setIsLoading(false);
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -38,10 +38,10 @@ const CategoryLinks = () => {
       <div className="category-list">
         {categories.map((category) => (
           <div key={category._id} className="category-item">
-            <a href={`/products/${category.slug}`}>
-              <img src={category.imageUrl} alt={"Alt:" + category.name} />
+            <Link to={`/products?category=${category.name}`}>
+              <img src={category.imageUrl} alt={`Alt: ${category.name}`} />
               <p>{category.name}</p>
-            </a>
+            </Link>
           </div>
         ))}
       </div>
