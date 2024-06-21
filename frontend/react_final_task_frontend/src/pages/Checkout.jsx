@@ -351,7 +351,17 @@ const CheckoutPage = () => {
           }),
         }
       );
-      if (!paymentResponse.ok) {
+      if (paymentResponse.ok) {
+        await fetch(`http://localhost:5010/cart/${TEST_USER_ID}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            items: [],
+          }),
+        });
+      } else {
         throw new Error("Payment processing failed");
       }
 

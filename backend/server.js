@@ -18,12 +18,9 @@ async function main() {
     console.log("MongoDB connected");
     const db = client.db("FinalTask");
     const cartsCollection = db.collection("carts");
-    const usersCollection = db.collection("users");
     const productsCollection = db.collection("products");
     const ordersCollection = db.collection("orders");
     const categoriesCollection = db.collection("categories");
-
-    // Carts
 
     // Carts
     app.post("/cart/add", async (req, res) => {
@@ -37,7 +34,6 @@ async function main() {
             items: [],
           };
         }
-
         const existingItemIndex = cart.items.findIndex(
           (item) => item.productId === productId
         );
@@ -74,34 +70,31 @@ async function main() {
 
     app.patch("/cart/:userId", async (req, res) => {
       const { userId } = req.params;
-      const { productId, quantity } = req.body;
-
+      const { items, productId, quantity } = req.body;
       try {
-        // Find the cart for the given userId
         const cart = await cartsCollection.findOne({ userId });
-
         if (!cart) {
           return res.status(404).send({ message: "Cart not found" });
         }
-
-        // Find the item in the cart
-        const itemIndex = cart.items.findIndex(
-          (item) => item.productId === productId
-        );
-        if (itemIndex === -1) {
-          return res.status(404).send({ error: "Item not found" });
+        if (items !== undefined) {
+          await cartsCollection.updateOne(
+            { userId },
+            { $set: { items: items } }
+          );
+        } else if (productId !== undefined && quantity !== undefined) {
+          const itemIndex = cart.items.findIndex(
+            (item) => item.productId === productId
+          );
+          cart.items[itemIndex].quantity = quantity;
+          await cartsCollection.updateOne(
+            { userId },
+            { $set: { items: cart.items } }
+          );
         }
-        cart.items[itemIndex].quantity = quantity;
-        await cartsCollection.updateOne(
-          { userId },
-          { $set: { items: cart.items } }
-        );
         res.send(cart);
       } catch (e) {
-        console.error("Failed to update cart item quantity", e);
-        res
-          .status(500)
-          .send({ message: "Failed to update cart item quantity" });
+        console.error("Failed to update cart", e);
+        res.status(500).send({ message: "Failed to update cart" });
       }
     });
 
@@ -140,8 +133,8 @@ async function main() {
         } else {
           res.status(404).json({ error: "Product not found" });
         }
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error(e);
         res.status(500).json({ error: "Internal server error" });
       }
     });
@@ -278,11 +271,9 @@ async function main() {
           { _id: new ObjectId(orderId) },
           { $set: { status: "paid", paymentMethod, paidAt: new Date() } }
         );
-
         if (result.modifiedCount === 0) {
           return res.status(404).json({ error: "Order not found" });
         }
-
         res.json({ message: "Payment processed successfully" });
       } catch (e) {
         handleError(res, e);
