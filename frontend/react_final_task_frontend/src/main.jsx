@@ -6,6 +6,7 @@ import CartPage from "./pages/CartPage";
 import Checkout from "./pages/Checkout";
 import App from "./pages/App";
 import About from "./pages/About";
+import OrderConfirm from "./pages/OrderConfirm";
 
 import "./pages/index.css";
 
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "/about-us",
         element: <About />,
+      },
+      {
+        path: "/order-confirmation",
+        element: <OrderConfirm />,
       },
     ],
   },

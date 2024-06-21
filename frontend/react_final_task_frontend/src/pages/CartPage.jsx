@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../assets/components/Footer";
 
+const TEST_USER_ID = "test_user_123";
+
 const CartPage = () => {
-  const userId = "test_user_123";
   const [cart, setCart] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +14,9 @@ const CartPage = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch(`http://localhost:5010/cart/${userId}`);
+        const response = await fetch(
+          `http://localhost:5010/cart/${TEST_USER_ID}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch cart data");
         }
@@ -28,7 +31,7 @@ const CartPage = () => {
     };
 
     fetchCart();
-  }, [userId]);
+  }, [TEST_USER_ID]);
 
   const changeQuantity = async (productId, newQuantity) => {
     if (newQuantity <= 0) {
@@ -36,16 +39,19 @@ const CartPage = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5010/cart/${userId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId,
-          quantity: newQuantity,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:5010/cart/${TEST_USER_ID}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId,
+            quantity: newQuantity,
+          }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to update cart item quantity");
       }
@@ -59,13 +65,16 @@ const CartPage = () => {
 
   const removeFromCart = async (productId) => {
     try {
-      const response = await fetch(`http://localhost:5010/cart/${userId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productId }),
-      });
+      const response = await fetch(
+        `http://localhost:5010/cart/${TEST_USER_ID}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ productId }),
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to remove item from cart");
       }
@@ -84,6 +93,7 @@ const CartPage = () => {
     }
     return total;
   };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -131,6 +141,7 @@ const CartPage = () => {
       </ul>
       <h3>Total Price: ${calculatePrice()}</h3>
       <Link to="/products">Back to All Products</Link>
+      <Link to="/checkout">Proceed to Checkout</Link>
       <Footer />
     </div>
   );

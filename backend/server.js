@@ -57,6 +57,7 @@ async function main() {
         res.status(500).json({ error: "Failed to add item to cart" });
       }
     });
+
     app.get("/cart/:userId", async (req, res) => {
       const { userId } = req.params;
       try {
@@ -123,52 +124,6 @@ async function main() {
       } catch (e) {
         console.error("Failed to remove item from cart:", e);
         res.status(500).send({ message: "Failed to remove item from cart" });
-      }
-    });
-
-    // Users
-    app.post("/users", async (req, res) => {
-      try {
-        const user = req.body;
-        const result = await usersCollection.insertOne(user);
-        res.send(result.ops[0]);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.get("/users", async (req, res) => {
-      try {
-        const users = await usersCollection.find().toArray();
-        res.send(users);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.put("/users/:id", async (req, res) => {
-      try {
-        const userId = req.params.id;
-        const updatedUser = req.body;
-        const result = await usersCollection.updateOne(
-          { _id: ObjectId(userId) },
-          { $set: updatedUser }
-        );
-        res.send("User updated");
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.delete("/users/:id", async (req, res) => {
-      try {
-        const userId = req.params.id;
-        const result = await usersCollection.deleteOne({
-          _id: ObjectId(userId),
-        });
-        res.send("User deleted");
-      } catch (e) {
-        handleError(res, e);
       }
     });
 
@@ -245,11 +200,20 @@ async function main() {
     });
 
     // Orders
-    app.post("/orders", async (req, res) => {
+    app.post("/orders/:userId", async (req, res) => {
       try {
-        const order = req.body;
+        const userId = req.params.userId;
+        const order = {
+          ...req.body,
+          userId,
+          status: "pending",
+          createdAt: new Date(),
+        };
         const result = await ordersCollection.insertOne(order);
-        res.send(result.ops[0]);
+        const insertedOrder = await ordersCollection.findOne({
+          _id: result.insertedId,
+        });
+        res.status(201).json(insertedOrder);
       } catch (e) {
         handleError(res, e);
       }
@@ -258,7 +222,17 @@ async function main() {
     app.get("/orders", async (req, res) => {
       try {
         const orders = await ordersCollection.find().toArray();
-        res.send(orders);
+        res.json(orders);
+      } catch (e) {
+        handleError(res, e);
+      }
+    });
+
+    app.get("/orders/:userId", async (req, res) => {
+      try {
+        const userId = req.params.userId;
+        const orders = await ordersCollection.find({ userId }).toArray();
+        res.json(orders);
       } catch (e) {
         handleError(res, e);
       }
@@ -272,7 +246,10 @@ async function main() {
           { _id: ObjectId(orderId) },
           { $set: updatedOrder }
         );
-        res.send("Order updated");
+        if (result.modifiedCount === 0) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+        res.json({ message: "Order updated successfully" });
       } catch (e) {
         handleError(res, e);
       }
@@ -284,7 +261,29 @@ async function main() {
         const result = await ordersCollection.deleteOne({
           _id: ObjectId(orderId),
         });
-        res.send("Order deleted");
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+        res.json({ message: "Order deleted successfully" });
+      } catch (e) {
+        handleError(res, e);
+      }
+    });
+
+    app.post("/process-payment", async (req, res) => {
+      try {
+        const { orderId, paymentMethod } = req.body;
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const result = await ordersCollection.updateOne(
+          { _id: new ObjectId(orderId) },
+          { $set: { status: "paid", paymentMethod, paidAt: new Date() } }
+        );
+
+        if (result.modifiedCount === 0) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+
+        res.json({ message: "Payment processed successfully" });
       } catch (e) {
         handleError(res, e);
       }
@@ -336,7 +335,6 @@ async function main() {
       }
     });
 
-    // Error handler
     function handleError(res, error) {
       console.error("Error:", error);
       res.status(500).send("Server error");
