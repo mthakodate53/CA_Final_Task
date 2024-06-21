@@ -1,3 +1,5 @@
+import "../../css/categories.css";
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -9,7 +11,7 @@ const CategoryLinks = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5010/categories"); // Adjust to your backend endpoint
+        const response = await fetch("http://localhost:5010/categories");
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
         }
@@ -40,7 +42,7 @@ const CategoryLinks = () => {
           <div key={category._id} className="category-item">
             <Link to={`/products?category=${category.name}`}>
               <img src={category.imageUrl} alt={`Alt: ${category.name}`} />
-              <p>{category.name}</p>
+              <h4>{category.name}</h4>
             </Link>
           </div>
         ))}

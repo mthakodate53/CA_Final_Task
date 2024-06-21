@@ -8,7 +8,7 @@ import App from "./pages/App";
 import About from "./pages/About";
 import OrderConfirm from "./pages/OrderConfirm";
 
-import "./pages/index.css";
+import "./css/index.css";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 

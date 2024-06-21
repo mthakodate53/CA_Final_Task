@@ -1,7 +1,8 @@
+import "../../css/modal.css";
+
 const Modal = ({
   isOpen,
   onClose,
-  title,
   message,
   primaryButton,
   secondaryButton,
@@ -10,12 +11,13 @@ const Modal = ({
 
   return (
     <div className="modal-overlay">
+      <div className="modal-backdrop"></div>
       <div className="modal-content">
-        <h2>{title}</h2>
         <p>{message}</p>
         <div className="modal-buttons">
           {primaryButton && (
             <button
+              className="modal-button"
               onClick={() => {
                 primaryButton.onClick();
                 onClose();
@@ -26,6 +28,7 @@ const Modal = ({
           )}
           {secondaryButton && (
             <button
+              className="modal-button"
               onClick={() => {
                 secondaryButton.onClick();
                 onClose();

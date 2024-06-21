@@ -1,0 +1,28 @@
+.footer {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer p {
+  margin: 10px 0;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.footer a {
+  text-decoration: none;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .footer p {
+    font-size: 12px;
+  }
+}
