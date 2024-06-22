@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import "../css/productpage.css";
 import Footer from "../assets/components/Footer";
 import Modal from "../assets/components/Modal";
 
@@ -48,6 +49,7 @@ const ProductPage = () => {
         price: product.discountPrice || product.price,
         quantity,
         userId: TEST_USER_ID,
+        imageUrl: product.imageUrl,
       };
       const response = await fetch("http://localhost:5010/cart/add", {
         method: "POST",
@@ -97,31 +99,55 @@ const ProductPage = () => {
   if (!product) return <div>Product not found</div>;
 
   return (
-    <div>
-      <div>
-        <h1>{product.name}</h1>
-        <p>{product.description}</p>
-        <p>Price: ${product.discountPrice || product.price}</p>
-        <p>Stock Quantity: {product.stockQuantity}</p>
-        <label htmlFor="quantity">Quantity:</label>
-        <select id="quantity" value={quantity} onChange={handleQuantityChange}>
-          {Array.from(
-            { length: Math.min(5, product.stockQuantity) },
-            (_, i) => (
-              <option key={`quantity-option-${i + 1}`} value={i + 1}>
-                {i + 1}
-              </option>
-            )
-          )}
-        </select>
-        <button
-          onClick={handleAddToCart}
-          disabled={!product.stockQuantity || quantity > product.stockQuantity}
-        >
-          Add to Cart
-        </button>
-        {product.imageUrl && <img src={product.imageUrl} alt={product.name} />}
-        <Link to="/products">Back to All Products</Link>
+    <div className="product-page">
+      <div className="product-content">
+        {product.imageUrl && (
+          <div className="product-image">
+            <img src={product.imageUrl} alt={product.name} />
+          </div>
+        )}
+        <div className="product-details">
+          <h1>{product.name}</h1>
+          <p>{product.description}</p>
+          <div className="price-container">
+            {product.discountPrice ? (
+              <>
+                <span className="original-price">${product.price}</span>
+                <span className="discount-price">${product.discountPrice}</span>
+              </>
+            ) : (
+              <span>${product.price}</span>
+            )}
+          </div>
+          <p>Stock Quantity: {product.stockQuantity}</p>
+          <label htmlFor="quantity"></label>
+          <select
+            id="quantity"
+            value={quantity}
+            onChange={handleQuantityChange}
+          >
+            {Array.from(
+              { length: Math.min(5, product.stockQuantity) },
+              (_, i) => (
+                <option key={`quantity-option-${i + 1}`} value={i + 1}>
+                  {i + 1}
+                </option>
+              )
+            )}
+          </select>
+          <button
+            className="cart-button"
+            onClick={handleAddToCart}
+            disabled={
+              !product.stockQuantity || quantity > product.stockQuantity
+            }
+          >
+            Add to Cart
+          </button>
+          <Link to="/products" className="back-link">
+            Back to All Products
+          </Link>
+        </div>
       </div>
       <Modal
         isOpen={isModalOpen}

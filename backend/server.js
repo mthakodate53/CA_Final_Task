@@ -25,7 +25,7 @@ async function main() {
     // Carts
     app.post("/cart/add", async (req, res) => {
       try {
-        const { productId, name, price, quantity, userId } = req.body;
+        const { productId, name, price, quantity, userId, imageUrl } = req.body;
         const cartCollection = db.collection("carts");
         let cart = await cartCollection.findOne({ userId });
         if (!cart) {
@@ -40,7 +40,7 @@ async function main() {
         if (existingItemIndex !== -1) {
           cart.items[existingItemIndex].quantity += quantity;
         } else {
-          cart.items.push({ productId, name, price, quantity });
+          cart.items.push({ productId, name, price, quantity, imageUrl }); // Add imageUrl to the new item
         }
         await cartCollection.updateOne(
           { userId },

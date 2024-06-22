@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../css/bestsellers.css";
-import Modal from "./Modal"; // Adjust the path as necessary
+import Modal from "./Modal";
 
 const TEST_USER_ID = "test_user_123";
 
@@ -35,8 +35,8 @@ const Bestsellers = () => {
           })
         );
         setBestsellers(fetchedProducts);
-      } catch (error) {
-        setError(error.message);
+      } catch (e) {
+        setError(e.message);
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +83,6 @@ const Bestsellers = () => {
         text: "Go to Cart",
         onClick: () => {
           closeModal();
-          // Navigate to cart page
           window.location.href = "/cart";
         },
       },

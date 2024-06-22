@@ -42,7 +42,7 @@ const CategoryLinks = () => {
           <div key={category._id} className="category-item">
             <Link to={`/products?category=${category.name}`}>
               <img src={category.imageUrl} alt={`Alt: ${category.name}`} />
-              <h4>{category.name}</h4>
+              <h4>{category.title}</h4>
             </Link>
           </div>
         ))}

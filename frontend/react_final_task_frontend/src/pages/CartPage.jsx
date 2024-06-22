@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../assets/components/Footer";
+import "../css/cartpage.css";
 
 const TEST_USER_ID = "test_user_123";
 
@@ -21,7 +22,24 @@ const CartPage = () => {
           throw new Error("Failed to fetch cart data");
         }
         const data = await response.json();
-        setCart(data.items);
+
+        const productCache = {};
+        const productDetailsPromises = data.items.map(async (item) => {
+          if (!productCache[item.productId]) {
+            const productResponse = await fetch(
+              `http://localhost:5010/products/${item.productId}`
+            );
+            if (!productResponse.ok) {
+              throw new Error("Failed to fetch product data");
+            }
+            const productData = await productResponse.json();
+            productCache[item.productId] = productData;
+          }
+          return { ...item, imageUrl: productCache[item.productId].imageUrl };
+        });
+
+        const productDetails = await Promise.all(productDetailsPromises);
+        setCart(productDetails);
       } catch (e) {
         setError("Failed to fetch cart data");
         console.error("Error:", e);
@@ -31,7 +49,7 @@ const CartPage = () => {
     };
 
     fetchCart();
-  }, [TEST_USER_ID]);
+  }, []);
 
   const changeQuantity = async (productId, newQuantity) => {
     if (newQuantity <= 0) {
@@ -55,8 +73,13 @@ const CartPage = () => {
       if (!response.ok) {
         throw new Error("Failed to update cart item quantity");
       }
-      const updatedCart = await response.json();
-      setCart(updatedCart.items);
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.productId === productId
+            ? { ...item, quantity: newQuantity }
+            : item
+        )
+      );
     } catch (e) {
       console.error("Error updating cart item quantity:", e);
       alert("Failed to update cart item quantity. Please try again.");
@@ -78,8 +101,9 @@ const CartPage = () => {
       if (!response.ok) {
         throw new Error("Failed to remove item from cart");
       }
-      const updatedCart = await response.json();
-      setCart(updatedCart.items);
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.productId !== productId)
+      );
     } catch (e) {
       console.error("Error removing item from cart:", e);
       alert("Failed to remove item from cart. Please try again.");
@@ -91,7 +115,7 @@ const CartPage = () => {
     for (const item of cart) {
       total += item.price * item.quantity;
     }
-    return total;
+    return total.toFixed(2);
   };
 
   if (isLoading) {
@@ -106,42 +130,58 @@ const CartPage = () => {
   }
 
   return (
-    <div>
-      <h1>Your Cart</h1>
-      <ul>
-        {cart.map((item) => (
-          <li key={item.productId}>
-            <div>
-              <h2>{item.name}</h2>
-              <p>Price: ${item.price}</p>
-              <p>Total Price: ${(item.price * item.quantity).toFixed(2)}</p>
-              <div>
-                <button
-                  onClick={() =>
-                    changeQuantity(item.productId, item.quantity - 1)
-                  }
-                >
-                  -
-                </button>
-                <span>{item.quantity}</span>
-                <button
-                  onClick={() =>
-                    changeQuantity(item.productId, item.quantity + 1)
-                  }
-                >
-                  +
-                </button>
-              </div>
-              <button onClick={() => removeFromCart(item.productId)}>
-                Remove
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <h3>Total Price: ${calculatePrice()}</h3>
-      <Link to="/products">Back to All Products</Link>
-      <Link to="/checkout">Proceed to Checkout</Link>
+    <div className="page-container">
+      <div className="content-wrap">
+        <div className="cart-wrapper">
+          <h1 className="cart-header">Your Cart</h1>
+          <ul>
+            {cart.map((item) => (
+              <li key={item.productId} className="cart-item">
+                <img src={item.imageUrl} alt={item.name} />
+                <div className="cart-item-content">
+                  <h2>{item.name}</h2>
+                  <p>Price: ${item.price}</p>
+                  <p>Total Price: ${item.price * item.quantity}</p>
+                </div>
+                <div className="item-actions">
+                  <div className="quantity-controls">
+                    <button
+                      className="quantity-button"
+                      onClick={() =>
+                        changeQuantity(item.productId, item.quantity - 1)
+                      }
+                    >
+                      -
+                    </button>
+                    <span className="item-quantity-digit">{item.quantity}</span>
+                    <button
+                      className="quantity-button"
+                      onClick={() =>
+                        changeQuantity(item.productId, item.quantity + 1)
+                      }
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    className="remove-button"
+                    onClick={() => removeFromCart(item.productId)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="cart-total">
+            <h3>Total Price: ${calculatePrice()}</h3>
+          </div>
+          <div className="cart-links">
+            <Link to="/products">Back to All Products</Link>
+            <Link to="/checkout">Proceed to Checkout</Link>
+          </div>
+        </div>
+      </div>
       <Footer />
     </div>
   );
