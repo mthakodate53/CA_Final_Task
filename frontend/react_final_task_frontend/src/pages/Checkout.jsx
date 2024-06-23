@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "../assets/components/Modal";
+import "../css/checkout.css";
 
 const TEST_USER_ID = "test_user_123";
 const COUNTRIES = [
@@ -53,7 +54,6 @@ const COUNTRIES = [
   "Djibouti",
   "Dominica",
   "Dominican Republic",
-  "East Timor (Timor-Leste)",
   "Ecuador",
   "Egypt",
   "El Salvador",
@@ -124,7 +124,7 @@ const COUNTRIES = [
   "Montenegro",
   "Morocco",
   "Mozambique",
-  "Myanmar (Burma)",
+  "Myanmar",
   "Namibia",
   "Nauru",
   "Nepal",
@@ -138,6 +138,7 @@ const COUNTRIES = [
   "Oman",
   "Pakistan",
   "Palau",
+  "Palestine",
   "Panama",
   "Papua New Guinea",
   "Paraguay",
@@ -178,6 +179,7 @@ const COUNTRIES = [
   "Tajikistan",
   "Tanzania",
   "Thailand",
+  "Timor-Leste",
   "Togo",
   "Tonga",
   "Trinidad and Tobago",
@@ -201,7 +203,7 @@ const COUNTRIES = [
   "Zimbabwe",
 ];
 
-const CheckoutPage = () => {
+const Checkout = () => {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [shippingInfo, setShippingInfo] = useState({
@@ -361,22 +363,14 @@ const CheckoutPage = () => {
             items: [],
           }),
         });
+
+        // Navigate to order confirmation page
+        navigate("/order-confirmation", {
+          state: { orderId: orderData._id },
+        });
       } else {
         throw new Error("Payment processing failed");
       }
-
-      setModal({
-        isOpen: true,
-        title: "Success",
-        message: "Order placed and payment processed successfully!",
-        primaryButton: {
-          text: "OK",
-          onClick: () =>
-            navigate("/order-confirmation", {
-              state: { orderId: orderData._id },
-            }),
-        },
-      });
     } catch (e) {
       console.error("Checkout error:", e);
       setModal({
@@ -396,111 +390,131 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-page">
       <h1>Checkout</h1>
-      <div className="cart-summary">
-        <h2>Your Cart</h2>
-        {isLoading ? (
-          <p>Loading cart items...</p>
-        ) : error ? (
-          <p className="error">{error}</p>
-        ) : (
-          cartItems.map((item) => (
-            <div key={item._id + item.name} className="cart-item">
-              <p>
-                {item.name} - Quantity: {item.quantity} - Price: $
-                {item.price * item.quantity}
-              </p>
+
+      <div className="form-wrapper">
+        <div className="cart-summary">
+          <h2>Your Cart</h2>
+          {isLoading ? (
+            <p>Loading cart items...</p>
+          ) : error ? (
+            <p className="error">{error}</p>
+          ) : (
+            cartItems.map((item) => (
+              <div key={item._id + item.name} className="cart-item">
+                <p>
+                  {item.name} - Quantity: {item.quantity} - Price: $
+                  {item.price * item.quantity}
+                </p>
+              </div>
+            ))
+          )}
+          <h3>Total: ${total}</h3>
+        </div>
+        <form onSubmit={handleCheckout} className="checkout-form">
+          <div className="form-section">
+            <h2>Shipping Address</h2>
+            <input
+              type="text"
+              name="name"
+              value={shippingInfo.name}
+              onChange={changeShipInfo}
+              placeholder="Full Name"
+              required
+            />
+            <input
+              type="text"
+              name="address"
+              value={shippingInfo.address}
+              onChange={changeShipInfo}
+              placeholder="Address"
+              required
+            />
+            <input
+              type="text"
+              name="city"
+              value={shippingInfo.city}
+              onChange={changeShipInfo}
+              placeholder="City"
+              required
+            />
+            <input
+              type="text"
+              name="zipCode"
+              value={shippingInfo.zipCode}
+              onChange={changeShipInfo}
+              placeholder="Zip Code"
+              required
+            />
+            <select
+              name="country"
+              value={shippingInfo.country}
+              onChange={changeShipInfo}
+              required
+            >
+              <option value="" disabled>
+                Select Country
+              </option>
+              {COUNTRIES.map((country, index) => (
+                <option key={index} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-section">
+            <h2>Payment Information</h2>
+            <input
+              type="text"
+              name="number"
+              value={creditCardInfo.number}
+              onChange={changePaymentInfo}
+              placeholder="Credit Card Number"
+              required
+            />
+            <input
+              type="text"
+              name="expiry"
+              value={creditCardInfo.expiry}
+              onChange={changePaymentInfo}
+              placeholder="Expiry Date (MM/YY)"
+              required
+            />
+            <input
+              type="text"
+              name="cvv"
+              value={creditCardInfo.cvv}
+              onChange={changePaymentInfo}
+              placeholder="CVV"
+              required
+            />
+            {error && <p className="error">{error}</p>}
+            <div className="form-bottom">
+              <div className="cards-img">
+                <img src="./visa.svg" />
+                <img src="./mastercard.svg" />
+                <img src="./american-express.svg" />
+              </div>
+              <button
+                type="submit"
+                className="place-order-btn"
+                disabled={isLoading}
+              >
+                {isLoading ? "Placing Order..." : "Place Order"}
+              </button>
             </div>
-          ))
-        )}
-        <h3>Total: ${total}</h3>
+          </div>
+        </form>
       </div>
-      <form onSubmit={handleCheckout} className="checkout-form">
-        <h2>Shipping Information</h2>
-        <input
-          type="text"
-          name="name"
-          value={shippingInfo.name}
-          onChange={changeShipInfo}
-          placeholder="Full Name"
-          required
+      {modal.isOpen && (
+        <Modal
+          title={modal.title}
+          message={modal.message}
+          primaryButton={modal.primaryButton}
+          secondaryButton={modal.secondaryButton}
         />
-        <input
-          type="text"
-          name="address"
-          value={shippingInfo.address}
-          onChange={changeShipInfo}
-          placeholder="Address"
-          required
-        />
-        <input
-          type="text"
-          name="city"
-          value={shippingInfo.city}
-          onChange={changeShipInfo}
-          placeholder="City"
-          required
-        />
-        <input
-          type="text"
-          name="zipCode"
-          value={shippingInfo.zipCode}
-          onChange={changeShipInfo}
-          placeholder="Zip Code"
-          required
-        />
-        <select
-          name="country"
-          value={shippingInfo.country}
-          onChange={changeShipInfo}
-          required
-        >
-          <option value="">Select Country</option>
-          {COUNTRIES.map((country) => (
-            <option key={country} value={country}>
-              {country}
-            </option>
-          ))}
-        </select>
-        <h2>Credit Card Information</h2>
-        <input
-          type="text"
-          name="number"
-          value={creditCardInfo.number}
-          onChange={changePaymentInfo}
-          placeholder="Card Number"
-          required
-        />
-        <input
-          type="text"
-          name="expiry"
-          value={creditCardInfo.expiry}
-          onChange={changePaymentInfo}
-          placeholder="Expiry Date (MM/YY)"
-          required
-        />
-        <input
-          type="text"
-          name="cvv"
-          value={creditCardInfo.cvv}
-          onChange={changePaymentInfo}
-          placeholder="CVV"
-          required
-        />
-        {error && <p className="error">{error}</p>}
-        <button type="submit" className="place-order-btn" disabled={isLoading}>
-          {isLoading ? "Processing..." : "Place Order"}
-        </button>
-      </form>
-      <Modal
-        isOpen={modal.isOpen}
-        onClose={() => setModal({ ...modal, isOpen: false })}
-        title={modal.title}
-        message={modal.message}
-        primaryButton={modal.primaryButton}
-        secondaryButton={modal.secondaryButton}
-      />
+      )}
     </div>
   );
 };
 
-export default CheckoutPage;
+export default Checkout;

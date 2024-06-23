@@ -6,7 +6,7 @@
 
 .content-wrap {
   flex: 1;
-  padding: 2.5rem 0;
+  padding: 0;
   background-color: #ffffff;
   text-align: center;
 }
@@ -52,7 +52,7 @@
 }
 
 .all-products-text {
-  width: 940px;
+  max-width: 940px;
   margin: 30px auto;
 }
 .active-category {

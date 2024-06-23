@@ -66,8 +66,9 @@
   }
 
   .nav-list {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 40px;
   }
 
   .nav-list li {

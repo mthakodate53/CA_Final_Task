@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import "../css/orderconfirm.css";
+
 const OrderConfirmPage = () => {
   const location = useLocation();
   const { state } = location;
@@ -9,11 +11,16 @@ const OrderConfirmPage = () => {
     <div className="order-confirm-page">
       <h1>Order Confirmation</h1>
       {orderId ? (
-        <p>
-          Your order has been placed successfully! Your order ID is {orderId}.
-        </p>
+        <div>
+          <p>Thanks for shopping at PlantMore store!</p>
+          <p>
+            {" "}
+            Your order has been placed successfully! Your order ID is{" "}
+            <strong>{orderId}</strong>.
+          </p>
+        </div>
       ) : (
-        <p>Something went wrong. We could not find your order information.</p>
+        <p>Somethxing went wrong. We could not find your order information.</p>
       )}
     </div>
   );

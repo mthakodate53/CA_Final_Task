@@ -1,14 +1,14 @@
-.page-container {
+.cart-page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 90dvh;
 }
 
 .content-wrap {
-  flex: 1;
-  padding: 2.5rem 0;
+  padding: 0 0;
   background-color: #ffffff;
   text-align: center;
+  height: 500px;
 }
 
 .cart-wrapper {
@@ -124,4 +124,9 @@ ul {
 .item-quantity-digit {
   font-size: 1.3rem;
   color: #748c69;
+}
+
+.empty-cart {
+  margin-top: 5rem;
+  text-align: center;
 }

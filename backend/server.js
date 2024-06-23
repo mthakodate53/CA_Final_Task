@@ -10,7 +10,7 @@ const PORT = 5010;
 app.use(cors());
 app.use(express.json());
 
-async function main() {
+async function server() {
   const client = new MongoClient(URI);
 
   try {
@@ -40,7 +40,7 @@ async function main() {
         if (existingItemIndex !== -1) {
           cart.items[existingItemIndex].quantity += quantity;
         } else {
-          cart.items.push({ productId, name, price, quantity, imageUrl }); // Add imageUrl to the new item
+          cart.items.push({ productId, name, price, quantity, imageUrl });
         }
         await cartCollection.updateOne(
           { userId },
@@ -339,4 +339,4 @@ async function main() {
   }
 }
 
-main();
+server();

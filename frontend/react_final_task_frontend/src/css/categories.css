@@ -28,6 +28,7 @@
   width: 300px;
   text-align: center;
   padding: 1.5rem;
+  opacity: 0.9;
 }
 
 .category-item:hover {

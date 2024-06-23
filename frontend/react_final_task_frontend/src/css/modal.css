@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent black */
-  backdrop-filter: blur(1px); /* Blur effect */
-  z-index: 1000; /* Ensure it's below the modal content */
+  background-color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(1px);
+  z-index: 1000;
 }
 
 .modal-content {
@@ -21,7 +21,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1001; /* Ensure it's above the backdrop */
+  z-index: 1001;
   font-size: 1.2rem;
 }
 

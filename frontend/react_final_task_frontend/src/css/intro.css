@@ -66,3 +66,22 @@
 .read-more a:hover {
   color: #748c69;
 }
+
+@media (max-width: 768px) {
+  .intro-paragraph {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+  }
+  .intro-text {
+    flex: 1;
+    padding: 2rem 0;
+    text-align: left;
+    margin-left: 0;
+    max-width: 60%;
+  }
+}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Footer from "../assets/components/Footer";
 import "../css/cartpage.css";
 
 const TEST_USER_ID = "test_user_123";
@@ -126,11 +125,15 @@ const CartPage = () => {
   }
 
   if (cart.length === 0) {
-    return <div>Your cart is empty</div>;
+    return (
+      <h2 className="empty-cart">
+        Your cart is empty, time to add something 😴
+      </h2>
+    );
   }
 
   return (
-    <div className="page-container">
+    <div className="cart-page-container">
       <div className="content-wrap">
         <div className="cart-wrapper">
           <h1 className="cart-header">Your Cart</h1>
@@ -182,7 +185,6 @@ const CartPage = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

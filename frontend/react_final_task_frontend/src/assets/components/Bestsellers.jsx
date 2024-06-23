@@ -41,7 +41,6 @@ const Bestsellers = () => {
         setIsLoading(false);
       }
     };
-
     fetchBestsellers();
   }, []);
 

@@ -30,7 +30,7 @@ h4 {
   margin: 10px 0px;
 }
 
-.product-link:hover .product-item {
+.product-item:hover {
   transform: scale(99%);
 }
 

@@ -17,8 +17,8 @@ const CategoryLinks = () => {
         }
         const data = await response.json();
         setCategories(data);
-      } catch (error) {
-        setError(error.message);
+      } catch (e) {
+        setError(e.message);
       } finally {
         setIsLoading(false);
       }

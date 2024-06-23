@@ -105,3 +105,12 @@
 .back-link:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .product-image img {
+    width: 100%;
+    border-radius: 8px;
+    max-height: 342px;
+    object-fit: contain;
+  }
+}
