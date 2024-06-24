@@ -22,17 +22,17 @@ Carts
 * GET /cart/:userId: Retrieve the cart for a specific user by their user ID.
 * PATCH /cart/:userId: Update the items or quantity of a specific item in the user's cart.
 * DELETE /cart/:userId: Remove an item from the user's cart by product ID.
-*  
+  
 Products
 * GET /products: Retrieve a list of all products.
 * GET /products/:id: Retrieve details of a single product by ID.
-* 
+  
 Orders
 * POST /orders/:userId: Create a new order for a specific user by their user ID.
-* 
+  
 Payments
 * POST /process-payment: Imitate processing a payment for an order.
-* 
+  
 Categories
 * GET /categories: Retrieve a list of all categories.
 
