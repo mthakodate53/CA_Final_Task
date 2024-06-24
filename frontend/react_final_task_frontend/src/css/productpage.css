@@ -13,6 +13,8 @@
   margin: 0 auto;
   padding-bottom: 40px;
   gap: 2rem;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .product-image {
