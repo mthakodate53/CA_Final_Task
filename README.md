@@ -12,6 +12,7 @@ To get started with the PlantMore Store, follow these steps:
 **Install:**
 
 BACKEND: Node.js, Express, MongoDB, CORS, Dotenv.
+
 FRONTENT: React, React Router DOM, @react-google-maps/api 
 
 Download provided .zip file and import these collections into your MongoDB database named FinalTask with the following collections: carts, categories, orders, and products. Enter your MongoDB connection string in an .env file like this: „MONGO_URI=your_mongo_db_connection_string“.
