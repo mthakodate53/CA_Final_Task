@@ -15,7 +15,7 @@ BACKEND: Node.js, Express, MongoDB, CORS, Dotenv.
 
 FRONTEND: React, React Router DOM, @react-google-maps/api 
 
-Download provided .zip file and import these collections into your MongoDB database named FinalTask with the following collections: carts, categories, orders, and products. Enter your MongoDB connection string in an .env file like this: „MONGO_URI=your_mongo_db_connection_string“.
+Download provided .zip file and import these collections into your MongoDB database named FinalTask with the following collections: carts, categories, orders, and products. Enter your MongoDB connection string in an .env file like this: „MONGODB_URI=your_mongo_db_connection_string“.
 
 API References
 Carts
