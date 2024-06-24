@@ -139,16 +139,6 @@ async function server() {
       }
     });
 
-    app.post("/products", async (req, res) => {
-      try {
-        const product = req.body;
-        const result = await productsCollection.insertOne(product);
-        res.send(result.ops[0]);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
     app.get("/products", async (req, res) => {
       try {
         const { page = 1, limit = 10, category } = req.query;
@@ -161,32 +151,6 @@ async function server() {
           .find(query, options)
           .toArray();
         res.send(products);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.put("/products/:id", async (req, res) => {
-      try {
-        const productId = req.params.id;
-        const updatedProduct = req.body;
-        const result = await productsCollection.updateOne(
-          { _id: ObjectId(productId) },
-          { $set: updatedProduct }
-        );
-        res.send("Product updated");
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.delete("/products/:id", async (req, res) => {
-      try {
-        const productId = req.params.id;
-        const result = await productsCollection.deleteOne({
-          _id: ObjectId(productId),
-        });
-        res.send("Product deleted");
       } catch (e) {
         handleError(res, e);
       }
@@ -212,57 +176,6 @@ async function server() {
       }
     });
 
-    // app.get("/orders", async (req, res) => {
-    //   try {
-    //     const orders = await ordersCollection.find().toArray();
-    //     res.json(orders);
-    //   } catch (e) {
-    //     handleError(res, e);
-    //   }
-    // });
-
-    // app.get("/orders/:userId", async (req, res) => {
-    //   try {
-    //     const userId = req.params.userId;
-    //     const orders = await ordersCollection.find({ userId }).toArray();
-    //     res.json(orders);
-    //   } catch (e) {
-    //     handleError(res, e);
-    //   }
-    // });
-
-    // app.put("/orders/:id", async (req, res) => {
-    //   try {
-    //     const orderId = req.params.id;
-    //     const updatedOrder = req.body;
-    //     const result = await ordersCollection.updateOne(
-    //       { _id: ObjectId(orderId) },
-    //       { $set: updatedOrder }
-    //     );
-    //     if (result.modifiedCount === 0) {
-    //       return res.status(404).json({ error: "Order not found" });
-    //     }
-    //     res.json({ message: "Order updated successfully" });
-    //   } catch (e) {
-    //     handleError(res, e);
-    //   }
-    // });
-
-    // app.delete("/orders/:id", async (req, res) => {
-    //   try {
-    //     const orderId = req.params.id;
-    //     const result = await ordersCollection.deleteOne({
-    //       _id: ObjectId(orderId),
-    //     });
-    //     if (result.deletedCount === 0) {
-    //       return res.status(404).json({ error: "Order not found" });
-    //     }
-    //     res.json({ message: "Order deleted successfully" });
-    //   } catch (e) {
-    //     handleError(res, e);
-    //   }
-    // });
-
     //Mock payment
 
     app.post("/process-payment", async (req, res) => {
@@ -283,46 +196,11 @@ async function server() {
     });
 
     // Categories
-    app.post("/categories", async (req, res) => {
-      try {
-        const category = req.body;
-        const result = await categoriesCollection.insertOne(category);
-        res.send(result.ops[0]);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
 
     app.get("/categories", async (req, res) => {
       try {
         const categories = await categoriesCollection.find().toArray();
         res.send(categories);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.put("/categories/:id", async (req, res) => {
-      try {
-        const categoryId = req.params.id;
-        const updatedCategory = req.body;
-        const result = await categoriesCollection.updateOne(
-          { _id: ObjectId(categoryId) },
-          { $set: updatedCategory }
-        );
-        res.send("Category updated");
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
-
-    app.delete("/categories/:id", async (req, res) => {
-      try {
-        const categoryId = req.params.id;
-        const result = await categoriesCollection.deleteOne({
-          _id: ObjectId(categoryId),
-        });
-        res.send("Category deleted");
       } catch (e) {
         handleError(res, e);
       }

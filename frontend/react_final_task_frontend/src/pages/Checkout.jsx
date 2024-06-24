@@ -363,8 +363,6 @@ const Checkout = () => {
             items: [],
           }),
         });
-
-        // Navigate to order confirmation page
         navigate("/order-confirmation", {
           state: { orderId: orderData._id },
         });
