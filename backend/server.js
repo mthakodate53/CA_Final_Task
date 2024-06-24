@@ -1,9 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
+require("dotenv").config();
 
-const URI =
-  "mongodb+srv://vismantasstankevicius:ananasas33@cluster0.bgzct23.mongodb.net/FinalTask?retryWrites=true&w=majority&appName=Cluster0";
+const URI = process.env.MONGODB_URI;
 const app = express();
 const PORT = 5010;
 
@@ -212,56 +212,58 @@ async function server() {
       }
     });
 
-    app.get("/orders", async (req, res) => {
-      try {
-        const orders = await ordersCollection.find().toArray();
-        res.json(orders);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
+    // app.get("/orders", async (req, res) => {
+    //   try {
+    //     const orders = await ordersCollection.find().toArray();
+    //     res.json(orders);
+    //   } catch (e) {
+    //     handleError(res, e);
+    //   }
+    // });
 
-    app.get("/orders/:userId", async (req, res) => {
-      try {
-        const userId = req.params.userId;
-        const orders = await ordersCollection.find({ userId }).toArray();
-        res.json(orders);
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
+    // app.get("/orders/:userId", async (req, res) => {
+    //   try {
+    //     const userId = req.params.userId;
+    //     const orders = await ordersCollection.find({ userId }).toArray();
+    //     res.json(orders);
+    //   } catch (e) {
+    //     handleError(res, e);
+    //   }
+    // });
 
-    app.put("/orders/:id", async (req, res) => {
-      try {
-        const orderId = req.params.id;
-        const updatedOrder = req.body;
-        const result = await ordersCollection.updateOne(
-          { _id: ObjectId(orderId) },
-          { $set: updatedOrder }
-        );
-        if (result.modifiedCount === 0) {
-          return res.status(404).json({ error: "Order not found" });
-        }
-        res.json({ message: "Order updated successfully" });
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
+    // app.put("/orders/:id", async (req, res) => {
+    //   try {
+    //     const orderId = req.params.id;
+    //     const updatedOrder = req.body;
+    //     const result = await ordersCollection.updateOne(
+    //       { _id: ObjectId(orderId) },
+    //       { $set: updatedOrder }
+    //     );
+    //     if (result.modifiedCount === 0) {
+    //       return res.status(404).json({ error: "Order not found" });
+    //     }
+    //     res.json({ message: "Order updated successfully" });
+    //   } catch (e) {
+    //     handleError(res, e);
+    //   }
+    // });
 
-    app.delete("/orders/:id", async (req, res) => {
-      try {
-        const orderId = req.params.id;
-        const result = await ordersCollection.deleteOne({
-          _id: ObjectId(orderId),
-        });
-        if (result.deletedCount === 0) {
-          return res.status(404).json({ error: "Order not found" });
-        }
-        res.json({ message: "Order deleted successfully" });
-      } catch (e) {
-        handleError(res, e);
-      }
-    });
+    // app.delete("/orders/:id", async (req, res) => {
+    //   try {
+    //     const orderId = req.params.id;
+    //     const result = await ordersCollection.deleteOne({
+    //       _id: ObjectId(orderId),
+    //     });
+    //     if (result.deletedCount === 0) {
+    //       return res.status(404).json({ error: "Order not found" });
+    //     }
+    //     res.json({ message: "Order deleted successfully" });
+    //   } catch (e) {
+    //     handleError(res, e);
+    //   }
+    // });
+
+    //Mock payment
 
     app.post("/process-payment", async (req, res) => {
       try {

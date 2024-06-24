@@ -16,7 +16,7 @@ const About = () => {
     lng: -108.3665,
   };
 
-  const isMobileScreen = window.innerWidth <= 768;
+  const isMobileScreen = window.innerWidth <= 600;
 
   return (
     <>

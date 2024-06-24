@@ -33,7 +33,6 @@
   padding-top: 50px;
   gap: 100px;
   padding-bottom: 50px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .video-container {
@@ -119,4 +118,8 @@ iframe {
     padding-top: 0px;
     gap: 0px;
   }
+
+  /* .intro-section {
+    display: none;
+  } */
 }
