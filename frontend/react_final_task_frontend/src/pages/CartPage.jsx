@@ -118,7 +118,7 @@ const CartPage = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="loading-text">Loading cart items...</div>;
   }
   if (error) {
     return <div>Error: {error}</div>;
